@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('static/images/image.png'); 
+            background-size: cover;
+            background-position: center;
+            color: #fff; /* Set text color to white for better contrast */
+            text-align: center;
+        }
+
+        /* Container for centering content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background for content */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to text */
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05); /* Slightly enlarge the button on hover */
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+
+        /* Additional styles for better text visibility */
+        .text-background {
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* Language Selector Styles */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .language-selector select {
+            appearance: none;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .language-selector select:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .language-selector::after {
+            content: '\25BC'; /* Down arrow */
+            position: absolute;
+            right: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 0.8em;
+        }
+
+        .language-selector select:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.8);
+            transform: scale(1.05);
+        }
+
+        .language-selector select:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .language-selector select {
+            animation: fadeInDown 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <select id="language" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="gu">Gujarati</option>
+            </select>
+        </div>
+    
+        <!-- Input Form Section -->
+        <div id="form-section">
+            <div class="text-background">
+                <h1 data-translate="title">Enter Soil and Weather Conditions</h1>
+                <form id="inputForm">
+                    <label for="nitrogen" data-translate="nitrogen">Nitrogen (N):</label>
+                    <input type="number" id="nitrogen" name="nitrogen" step="any" required>
+
+                    <label for="phosphorus" data-translate="phosphorus">Phosphorus (P):</label>
+                    <input type="number" id="phosphorus" name="phosphorus" step="any" required>
+
+                    <label for="potassium" data-translate="potassium">Potassium (K):</label>
+                    <input type="number" id="potassium" name="potassium" step="any" required>
+
+                    <label for="temperature" data-translate="temperature">Temperature (°C):</label>
+                    <input type="number" id="temperature" name="temperature" step="any" required>
+
+                    <label for="humidity" data-translate="humidity">Humidity (%):</label>
+                    <input type="number" id="humidity" name="humidity" step="any" required>
+
+                    <label for="ph" data-translate="ph">pH Value:</label>
+                    <input type="number" id="ph" name="ph" step="any" required>
+
+                    <label for="rainfall" data-translate="rainfall">Rainfall (mm):</label>
+                    <input type="number" id="rainfall" name="rainfall" step="any" required>
+
+                    <button type="button" onclick="submitForm()" data-translate="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Indicator Section -->
+        <div id="loading-section" class="hidden">
+            <div class="text-background">
+                <h1 data-translate="processing">Processing your data...</h1>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="hidden result">
+            <div class="text-background">
+                <h1 data-translate="result-title">Recommended Crop</h1>
+                <p id="result-text" data-translate="result-text">Your recommended crop is: <strong id="crop-name">Crop Name</strong></p>
+                <button onclick="backToForm()" data-translate="back">Back to Input</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       const translations = {
+            en: {
+                title: "Enter Soil and Weather Conditions",
+                "label-nitrogen": "Nitrogen (N):",
+                "label-phosphorus": "Phosphorus (P):",
+                "label-potassium": "Potassium (K):",
+                "label-temperature": "Temperature (°C):",
+                "label-humidity": "Humidity (%):",
+                "label-ph": "pH Value:",
+                "label-rainfall": "Rainfall (mm):",
+                "submit-button": "Submit",
+                "processing": "Processing your data...",
+                "result-title": "Recommended Crop",
+                "result-text": "Your recommended crop is:",
+                "back-button": "Back to Input"
+            },
+            hi: {
+                title: "मिट्टी और मौसम की स्थिति दर्ज करें",
+                "label-nitrogen": "नाइट्रोजन (N):",
+                "label-phosphorus": "फॉस्फोरस (P):",
+                "label-potassium": "पोटेशियम (K):",
+                "label-temperature": "तापमान (°C):",
+                "label-humidity": "आर्द्रता (%):",
+                "label-ph": "pH मान:",
+                "label-rainfall": "वर्षा (मिमी):",
+                "submit-button": "प्रस्तुत करें",
+                "processing": "आपका डेटा संसाधित किया जा रहा है...",
+                "result-title": "अनुशंसित फसल",
+                "result-text": "आपकी अनुशंसित फसल है:",
+                "back-button": "इनपुट पर वापस जाएं"
+            },
+            gu: {
+                title: "માટી અને હવામાનની શરતો દાખલ કરો",
+                "label-nitrogen": "નાઈટ્રોજન (N):",
+                "label-phosphorus": "ફોસ્ફોરસ (P):",
+                "label-potassium": "પોટેશિયમ (K):",
+                "label-temperature": "તાપમાન (°C):",
+                "label-humidity": "ભેજ (%):",
+                "label-ph": "pH મૂલ્ય:",
+                "label-rainfall": "વરસાદ (મીમી):",
+                "submit-button": "સબમિટ કરો",
+                "processing": "તમારા ડેટાને પ્રક્રિયા કરવામાં આવી રહ્યું છે...",
+                "result-title": "ભલામણ કરેલી પાક",
+                "result-text": "તમારી ભલામણ કરેલી પાક છે:",
+                "back-button": "ઇનપુટ પર પાછા જાઓ"
+            }
+        };
+
+        function changeLanguage() {
+            const selectedLanguage = document.getElementById("language").value;
+            const elementsToTranslate = Object.keys(translations[selectedLanguage]);
+
+            elementsToTranslate.forEach((key) => {
+                document.getElementById(key).textContent = translations[selectedLanguage][key];
+            });
+        }
+
+        async function submitForm() {
+            // Hide the input form
+            document.getElementById('form-section').classList.add('hidden');
+            // Show the loading indicator
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            // Create FormData object from the form
+            const formData = new FormData(document.getElementById('inputForm'));
+
+            try {
+                // Send form data to the server
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Check if the response is ok
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Parse JSON response
+                const data = await response.json();
+                const cropName = data.crop;
+
+                // Hide loading indicator
+                document.getElementById('loading-section').classList.add('hidden');
+                // Show result section
+                document.getElementById('result-section').classList.remove('hidden');
+                // Update result with server response
+                document.getElementById('crop-name').textContent = cropName;
+
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                // Handle errors here, possibly show an error message to the user
+            }
+        }
+
+        function backToForm() {
+            // Hide the result section
+            document.getElementById('result-section').classList.add('hidden');
+            // Show the input form
+            document.getElementById('form-section').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
+

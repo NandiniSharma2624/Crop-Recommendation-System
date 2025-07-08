@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Enter Soil and Weather Conditions</h1>
+    <form id="inputForm" action="loading.html" method="POST">
+        <label for="nitrogen">Nitrogen:</label>
+        <input type="number" id="nitrogen" name="nitrogen" step="any" required><br>
+        <label for="phosphorus">Phosphorus:</label>
+        <input type="number" id="phosphorus" name="phosphorus" step="any" required><br>
+        <label for="potassium">Potassium:</label>
+        <input type="number" id="potassium" name="potassium" step="any" required><br>
+        <label for="temperature">Temperature (°C):</label>
+        <input type="number" id="temperature" name="temperature" step="any" required><br>
+        <label for="humidity">Humidity (%):</label>
+        <input type="number" id="humidity" name="humidity" step="any" required><br>
+        <label for="ph">pH Value:</label>
+        <input type="number" id="ph" name="ph" step="0.1" required><br>
+        <label for="rainfall">Rainfall (mm):</label>
+        <input type="number" id="rainfall" name="rainfall" step="any" required><br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

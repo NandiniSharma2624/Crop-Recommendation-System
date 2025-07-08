@@ -1,0 +1,26 @@
+    <script>
+        function submitForm() {
+            // Hide the input form
+            document.getElementById('form-section').classList.add('hidden');
+            // Show the loading indicator
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            // Simulate form submission and processing
+            setTimeout(function() {
+                // Hide loading indicator
+                document.getElementById('loading-section').classList.add('hidden');
+                // Show result section
+                document.getElementById('result-section').classList.remove('hidden');
+
+                // Example result, replace this with actual result from your server
+                document.getElementById('crop-name').textContent = "Wheat"; // Replace with actual result
+            }, 3000); // Simulate a delay of 3 seconds
+        }
+
+        function backToForm() {
+            // Hide the result section
+            document.getElementById('result-section').classList.add('hidden');
+            // Show the input form
+            document.getElementById('form-section').classList.remove('hidden');
+        }
+    </script>
